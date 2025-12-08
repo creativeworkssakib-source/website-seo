@@ -1,7 +1,7 @@
 // Configuration
 const CONFIG = {
     // আপনার n8n webhook URL এখানে বসান
-    n8nWebhookUrl: 'YOUR_N8N_WEBHOOK_URL_HERE', // Example: 'https://your-n8n-instance.com/webhook/seo-analysis'
+    n8nWebhookUrl: 'https://server3.automationlearners.pro/webhook-test/seo-analysis', // Example: 'https://your-n8n-instance.com/webhook/seo-analysis'
 };
 
 // DOM Elements

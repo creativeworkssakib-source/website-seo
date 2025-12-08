@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO Analyzer - AI Powered Website Analysis</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <svg width="60" height="60" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="25" cy="25" r="23" stroke="url(#gradient)" stroke-width="4"/>
+                        <path d="M15 25L22 32L35 18" stroke="url(#gradient)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <defs>
+                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <h1 class="main-title">SEO Analyzer</h1>
+            </div>
+            <p class="subtitle">AI-Powered Website SEO Analysis & Recommendations</p>
+        </header>
+
+        <!-- Main Analysis Form -->
+        <section class="analysis-section" id="analysisSection">
+            <div class="card glass-card">
+                <h2 class="section-title">Analyze Your Website</h2>
+                <p class="section-description">Enter your website URL and get instant SEO recommendations</p>
+                
+                <form id="seoForm" class="seo-form">
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <input 
+                            type="url" 
+                            id="websiteUrl" 
+                            placeholder="https://www.metal-archives.com" 
+                            required
+                            class="url-input"
+                        />
+                    </div>
+                    <button type="submit" class="analyze-btn" id="analyzeBtn">
+                        <span class="btn-text">Analyze Website</span>
+                        <span class="btn-icon"><i class="fas fa-arrow-right"></i></span>
+                    </button>
+                </form>
+
+                <!-- Loading State -->
+                <div class="loading-container" id="loadingContainer" style="display: none;">
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                    </div>
+                    <p class="loading-text">Analyzing your website...</p>
+                    <div class="loading-steps">
+                        <div class="step active">
+                            <i class="fas fa-search"></i>
+                            <span>Scanning website</span>
+                        </div>
+                        <div class="step">
+                            <i class="fas fa-brain"></i>
+                            <span>AI Analysis</span>
+                        </div>
+                        <div class="step">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Generating report</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div class="message error-message" id="errorMessage" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p id="errorText"></p>
+                </div>
+
+                <!-- Success Message -->
+                <div class="message success-message" id="successMessage" style="display: none;">
+                    <i class="fas fa-check-circle"></i>
+                    <p>Analysis complete! Your AI assistant is ready to help.</p>
+                </div>
+            </div>
+
+            <!-- Feature Cards -->
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon rocket">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Fast Analysis</h3>
+                    <p>Get instant SEO recommendations in seconds</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon brain">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI-Powered</h3>
+                    <p>Advanced AI algorithms for accurate insights</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon chart">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>Detailed Reports</h3>
+                    <p>Comprehensive analysis with actionable steps</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon star">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3>Google Optimized</h3>
+                    <p>Recommendations focused on Google ranking</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Chat Assistant -->
+        <section class="chat-section" id="chatSection" style="display: none;">
+            <div class="chat-container glass-card">
+                <div class="chat-header">
+                    <div class="chat-header-info">
+                        <div class="assistant-avatar">
+                            <i class="fas fa-robot"></i>
+                            <span class="status-dot"></span>
+                        </div>
+                        <div class="assistant-info">
+                            <h3>SEO Assistant</h3>
+                            <p class="status-text">Online - Ready to help</p>
+                        </div>
+                    </div>
+                    <div class="chat-actions">
+                        <button class="icon-btn" id="minimizeChat" title="Minimize">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button class="icon-btn" id="newAnalysisBtn" title="New Analysis">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message-date">Today</div>
+                    <!-- Messages will be added here dynamically -->
+                </div>
+
+                <div class="chat-input-container">
+                    <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <form class="chat-input-form" id="chatForm">
+                        <button type="button" class="icon-btn attach-btn" title="Attach file">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <input 
+                            type="text" 
+                            id="chatInput" 
+                            placeholder="Ask me anything about your website's SEO..." 
+                            autocomplete="off"
+                        />
+                        <button type="submit" class="icon-btn send-btn" id="sendBtn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                    <div class="quick-questions">
+                        <span class="quick-question-label">Quick questions:</span>
+                        <button class="quick-question-btn" data-question="How can I improve my meta descriptions?">
+                            Meta descriptions
+                        </button>
+                        <button class="quick-question-btn" data-question="What about mobile optimization?">
+                            Mobile optimization
+                        </button>
+                        <button class="quick-question-btn" data-question="How to improve page speed?">
+                            Page speed
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Floating Chat Button (when minimized) -->
+    <button class="floating-chat-btn" id="floatingChatBtn" style="display: none;">
+        <i class="fas fa-comments"></i>
+        <span class="notification-badge" id="notificationBadge">1</span>
+    </button>
+
+    <script src="script.js"></script>
+</body>
+</html>

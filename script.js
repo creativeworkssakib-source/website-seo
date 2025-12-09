@@ -1,7 +1,7 @@
 // Configuration
 const CONFIG = {
-    n8nWebhookUrl: 'https://server3.automationlearners.pro/webhook/seo-analysis',
-    chatWebhookUrl: 'https://server3.automationlearners.pro/webhook/seo-chat',
+    n8nWebhookUrl: 'https://server3.automationlearners.pro/webhook-test/seo-analysis',
+    chatWebhookUrl: 'https://server3.automationlearners.pro/webhook-test/seo-chat',
 };
 
 // DOM Elements

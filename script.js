@@ -1,8 +1,8 @@
 // Configuration
 const CONFIG = {
     // আপনার n8n webhook URL এখানে বসান
-    n8nWebhookUrl: 'https://server3.automationlearners.pro/webhook/seo-analysis', // Example: 'https://your-n8n-instance.com/webhook/seo-analysis'
-    chatWebhookUrl: 'https://server3.automationlearners.pro/webhook/seo-chat', // Example: 'https://your-n8n-instance.com/webhook/seo-chat'
+    n8nWebhookUrl: 'https://server3.automationlearners.pro/webhook-test/seo-analysis', // Example: 'https://your-n8n-instance.com/webhook/seo-analysis'
+    chatWebhookUrl: 'https://server3.automationlearners.pro/webhook-test/seo-analysis', // Example: 'https://your-n8n-instance.com/webhook/seo-chat'
 };
 
 // DOM Elements

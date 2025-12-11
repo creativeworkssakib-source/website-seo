@@ -3,7 +3,7 @@
 // ========================================
 
 // Configuration
-const WEBHOOK_URL = 'https://server3.automationlearners.pro/webhook-test/seo-chat';
+const WEBHOOK_URL = 'https://server3.automationlearners.pro/webhook/seo-chat';
 let currentWebsiteUrl = '';
 let sessionId = generateSessionId();
 

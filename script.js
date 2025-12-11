@@ -1,346 +1,272 @@
 // Configuration
-const CONFIG = {
-    // আপনার n8n webhook URL এখানে বসান
-    n8nWebhookUrl: 'https://server3.automationlearners.pro/webhook-test/seo-analysis', // Example: 'https://your-n8n-instance.com/webhook/seo-analysis'
-    chatWebhookUrl: 'https://server3.automationlearners.pro/webhook-test/seo-chat', // Example: 'https://your-n8n-instance.com/webhook/seo-chat'
-};
-
-// DOM Elements
-const form = document.getElementById('seoForm');
-const websiteUrlInput = document.getElementById('websiteUrl');
-const analyzeBtn = document.getElementById('analyzeBtn');
-const loadingContainer = document.getElementById('loadingContainer');
-const errorMessage = document.getElementById('errorMessage');
-const errorText = document.getElementById('errorText');
-const successMessage = document.getElementById('successMessage');
-const analysisSection = document.getElementById('analysisSection');
-const chatSection = document.getElementById('chatSection');
-const chatMessages = document.getElementById('chatMessages');
-const chatForm = document.getElementById('chatForm');
-const chatInput = document.getElementById('chatInput');
-const sendBtn = document.getElementById('sendBtn');
-const typingIndicator = document.getElementById('typingIndicator');
-const newAnalysisBtn = document.getElementById('newAnalysisBtn');
-const minimizeChat = document.getElementById('minimizeChat');
-const floatingChatBtn = document.getElementById('floatingChatBtn');
-const notificationBadge = document.getElementById('notificationBadge');
-
-// State
+const WEBHOOK_URL = 'https://server3.automationlearners.pro/webhook-test/seo-chat';
 let currentWebsiteUrl = '';
 let sessionId = generateSessionId();
-let isMinimized = false;
-
-// Event Listeners
-form.addEventListener('submit', handleSubmit);
-chatForm.addEventListener('submit', handleChatSubmit);
-newAnalysisBtn.addEventListener('click', resetForm);
-minimizeChat.addEventListener('click', toggleChatMinimize);
-floatingChatBtn.addEventListener('click', toggleChatMinimize);
-
-// Quick question buttons
-document.querySelectorAll('.quick-question-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const question = this.getAttribute('data-question');
-        chatInput.value = question;
-        handleChatSubmit(new Event('submit'));
-    });
-});
 
 // Generate unique session ID
 function generateSessionId() {
     return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 }
 
-// Form Submit Handler
-async function handleSubmit(e) {
-    e.preventDefault();
+// DOM Elements
+const websiteUrlInput = document.getElementById('websiteUrl');
+const analyzeBtn = document.getElementById('analyzeBtn');
+const analysisResult = document.getElementById('analysisResult');
+const chatMessages = document.getElementById('chatMessages');
+const chatInput = document.getElementById('chatInput');
+const sendBtn = document.getElementById('sendBtn');
+const clearChatBtn = document.getElementById('clearChat');
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    setupEventListeners();
+    loadChatHistory();
+});
+
+// Setup Event Listeners
+function setupEventListeners() {
+    analyzeBtn.addEventListener('click', handleAnalyze);
+    sendBtn.addEventListener('click', handleSendMessage);
+    clearChatBtn.addEventListener('click', handleClearChat);
     
+    chatInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSendMessage();
+        }
+    });
+
+    // Auto-resize textarea
+    chatInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    });
+
+    // Smooth scroll to analyzer
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+}
+
+// Handle Analyze Button Click
+async function handleAnalyze() {
     const url = websiteUrlInput.value.trim();
+    
     if (!url) {
-        showError('Please enter a valid website URL');
+        showError('দয়া করে একটি ওয়েবসাইট URL দিন');
         return;
     }
 
     if (!isValidUrl(url)) {
-        showError('Please enter a valid URL (e.g., https://example.com)');
+        showError('দয়া করে একটি সঠিক URL দিন (http:// বা https:// সহ)');
         return;
     }
 
     currentWebsiteUrl = url;
-    sessionId = generateSessionId(); // New session for new analysis
-
-    // Hide messages and show loading
-    hideAllMessages();
-    showLoading();
     
-    // Animate loading steps
-    animateLoadingSteps();
-
+    // Show loading state
+    setAnalyzeButtonLoading(true);
+    
     try {
-        // Send to n8n webhook
-        const response = await fetch(CONFIG.n8nWebhookUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                websiteUrl: url,
-                sessionId: sessionId,
-                timestamp: new Date().toISOString(),
-                action: 'analyze'
-            })
+        // Send analysis request to webhook
+        const response = await sendToWebhook({
+            type: 'analyze',
+            url: url,
+            sessionId: sessionId,
+            timestamp: new Date().toISOString()
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        // Show analysis result section
+        analysisResult.style.display = 'block';
+        analysisResult.scrollIntoView({ behavior: 'smooth' });
 
-        const data = await response.json();
-        
-        // Hide loading and show success
-        hideLoading();
-        showSuccess();
-        
-        // Wait a bit then show chat
-        setTimeout(() => {
-            showChat();
-            
-            // Add initial AI message
-            const initialMessage = data.initialMessage || 
-                `আপনার ওয়েবসাইট ${url} এর বিশ্লেষণ সম্পন্ন হয়েছে! আমি আপনার SEO উন্নতির জন্য প্রস্তুত। আপনি কি জানতে চান?`;
-            
-            addMessage('assistant', initialMessage);
-            
-            // If there are immediate findings, add them
-            if (data.findings && data.findings.length > 0) {
-                setTimeout(() => {
-                    const findingsMessage = formatFindings(data.findings);
-                    addMessage('assistant', findingsMessage);
-                }, 1000);
-            }
-        }, 1500);
+        // Add bot message about analysis
+        addBotMessage(`আমি "${url}" ওয়েবসাইটটি বিশ্লেষণ করছি... ⏳\n\nঅনুগ্রহ করে কিছুক্ষণ অপেক্ষা করুন। বিশ্লেষণ সম্পন্ন হলে আমি আপনাকে বিস্তারিত রিপোর্ট দেব।`);
+
+        // Save to chat history
+        saveChatHistory();
 
     } catch (error) {
-        console.error('Error:', error);
-        hideLoading();
-        showError('দুঃখিত, বিশ্লেষণে একটি সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।');
+        console.error('Analysis error:', error);
+        showError('বিশ্লেষণ করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।');
+    } finally {
+        setAnalyzeButtonLoading(false);
     }
 }
 
-// Chat Submit Handler
-async function handleChatSubmit(e) {
-    e.preventDefault();
-    
+// Handle Send Message
+async function handleSendMessage() {
     const message = chatInput.value.trim();
+    
     if (!message) return;
 
     // Add user message
-    addMessage('user', message);
+    addUserMessage(message);
     chatInput.value = '';
+    chatInput.style.height = 'auto';
+
+    // Disable send button
+    sendBtn.disabled = true;
 
     // Show typing indicator
-    showTyping();
+    const typingId = showTypingIndicator();
 
     try {
-        // Send to n8n chat webhook
-        const response = await fetch(CONFIG.chatWebhookUrl, {
+        // Send message to webhook
+        const response = await sendToWebhook({
+            type: 'chat',
+            message: message,
+            url: currentWebsiteUrl,
+            sessionId: sessionId,
+            timestamp: new Date().toISOString()
+        });
+
+        // Remove typing indicator
+        removeTypingIndicator(typingId);
+
+        // The bot response will come from webhook
+        // For now, add a placeholder response
+        setTimeout(() => {
+            addBotMessage('আপনার প্রশ্নের উত্তর প্রক্রিয়া করা হচ্ছে... 🔄');
+        }, 500);
+
+    } catch (error) {
+        console.error('Send message error:', error);
+        removeTypingIndicator(typingId);
+        addBotMessage('দুঃখিত, আপনার বার্তা পাঠাতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।');
+    } finally {
+        sendBtn.disabled = false;
+        saveChatHistory();
+    }
+}
+
+// Send data to webhook
+async function sendToWebhook(data) {
+    try {
+        const response = await fetch(WEBHOOK_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                message: message,
-                websiteUrl: currentWebsiteUrl,
-                sessionId: sessionId,
-                timestamp: new Date().toISOString()
-            })
+            body: JSON.stringify(data)
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error('Webhook request failed');
         }
 
-        const data = await response.json();
-        
-        // Hide typing indicator
-        hideTyping();
-        
-        // Add AI response
-        const aiMessage = data.response || 'দুঃখিত, আমি এই মুহূর্তে উত্তর দিতে পারছি না।';
-        addMessage('assistant', aiMessage);
-
+        return await response.json();
     } catch (error) {
-        console.error('Error:', error);
-        hideTyping();
-        addMessage('assistant', 'দুঃখিত, একটি সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।');
+        console.error('Webhook error:', error);
+        throw error;
     }
 }
 
-// Add message to chat
-function addMessage(sender, text) {
+// Add user message to chat
+function addUserMessage(message) {
     const messageDiv = document.createElement('div');
-    messageDiv.className = `chat-message ${sender}`;
-    
-    const now = new Date();
-    const timeString = now.toLocaleTimeString('en-US', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-    });
-
+    messageDiv.className = 'message user-message';
     messageDiv.innerHTML = `
-        <div class="message-avatar ${sender}">
-            <i class="fas fa-${sender === 'user' ? 'user' : 'robot'}"></i>
+        <div class="message-avatar">
+            <i class="fas fa-user"></i>
         </div>
         <div class="message-content">
-            <div class="message-text">${formatMessage(text)}</div>
-            <div class="message-time">${timeString}</div>
+            <p>${escapeHtml(message)}</p>
         </div>
     `;
-
     chatMessages.appendChild(messageDiv);
     scrollToBottom();
-
-    // Show notification if chat is minimized
-    if (isMinimized && sender === 'assistant') {
-        showNotification();
-    }
 }
 
-// Format message (support for markdown-like formatting)
-function formatMessage(text) {
-    // Convert line breaks
-    text = text.replace(/\n/g, '<br>');
-    
-    // Bold text
-    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    
-    // Italic text
-    text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    
-    // Lists
-    text = text.replace(/^- (.*?)$/gm, '<li>$1</li>');
-    if (text.includes('<li>')) {
-        text = '<ul>' + text + '</ul>';
-    }
-    
-    // Numbers
-    text = text.replace(/(\d+)/g, '<span style="color: #667eea; font-weight: 600;">$1</span>');
-    
-    return text;
-}
-
-// Format findings
-function formatFindings(findings) {
-    let message = '📊 **প্রাথমিক বিশ্লেষণ:**\n\n';
-    findings.forEach((finding, index) => {
-        message += `${index + 1}. ${finding}\n`;
-    });
-    message += '\n\nকোন নির্দিষ্ট বিষয়ে জানতে চান?';
-    return message;
-}
-
-// Show/Hide functions
-function showLoading() {
-    loadingContainer.style.display = 'block';
-    analyzeBtn.disabled = true;
-}
-
-function hideLoading() {
-    loadingContainer.style.display = 'none';
-    analyzeBtn.disabled = false;
-}
-
-function showError(message) {
-    errorText.textContent = message;
-    errorMessage.style.display = 'flex';
-    setTimeout(() => {
-        errorMessage.style.display = 'none';
-    }, 5000);
-}
-
-function showSuccess() {
-    successMessage.style.display = 'flex';
-    setTimeout(() => {
-        successMessage.style.display = 'none';
-    }, 3000);
-}
-
-function hideAllMessages() {
-    errorMessage.style.display = 'none';
-    successMessage.style.display = 'none';
-}
-
-function showChat() {
-    analysisSection.style.display = 'none';
-    chatSection.style.display = 'block';
-}
-
-function showTyping() {
-    typingIndicator.style.display = 'flex';
+// Add bot message to chat
+function addBotMessage(message) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message bot-message';
+    messageDiv.innerHTML = `
+        <div class="message-avatar">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div class="message-content">
+            <p>${formatBotMessage(message)}</p>
+        </div>
+    `;
+    chatMessages.appendChild(messageDiv);
     scrollToBottom();
 }
 
-function hideTyping() {
-    typingIndicator.style.display = 'none';
+// Show typing indicator
+function showTypingIndicator() {
+    const typingId = 'typing_' + Date.now();
+    const typingDiv = document.createElement('div');
+    typingDiv.id = typingId;
+    typingDiv.className = 'message bot-message';
+    typingDiv.innerHTML = `
+        <div class="message-avatar">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div class="message-content">
+            <div class="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    `;
+    chatMessages.appendChild(typingDiv);
+    scrollToBottom();
+    return typingId;
 }
 
-function toggleChatMinimize() {
-    isMinimized = !isMinimized;
-    
-    if (isMinimized) {
-        chatSection.style.display = 'none';
-        floatingChatBtn.style.display = 'flex';
-    } else {
-        chatSection.style.display = 'block';
-        floatingChatBtn.style.display = 'none';
-        notificationBadge.style.display = 'none';
-        scrollToBottom();
+// Remove typing indicator
+function removeTypingIndicator(typingId) {
+    const element = document.getElementById(typingId);
+    if (element) {
+        element.remove();
     }
 }
 
-function showNotification() {
-    if (isMinimized) {
-        notificationBadge.style.display = 'flex';
-        const currentCount = parseInt(notificationBadge.textContent) || 0;
-        notificationBadge.textContent = currentCount + 1;
+// Handle clear chat
+function handleClearChat() {
+    if (confirm('আপনি কি চ্যাট ইতিহাস মুছে ফেলতে চান?')) {
+        // Keep only the welcome message
+        chatMessages.innerHTML = `
+            <div class="message bot-message">
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">
+                    <p>নমস্কার! আমি আপনার SEO সহকারী। আপনার ওয়েবসাইটের URL উপরের সার্চ বক্সে দিন, আমি বিশ্লেষণ করে আপনাকে সাহায্য করব। 🚀</p>
+                </div>
+            </div>
+        `;
+        currentWebsiteUrl = '';
+        analysisResult.style.display = 'none';
+        sessionId = generateSessionId();
+        clearChatHistory();
     }
 }
 
-function scrollToBottom() {
-    setTimeout(() => {
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }, 100);
-}
-
-// Animate loading steps
-function animateLoadingSteps() {
-    const steps = document.querySelectorAll('.step');
-    steps.forEach(step => step.classList.remove('active'));
+// Format bot message (convert links, bold, etc.)
+function formatBotMessage(message) {
+    // Convert newlines to <br>
+    message = message.replace(/\n/g, '<br>');
     
-    let currentStep = 0;
-    const interval = setInterval(() => {
-        if (currentStep < steps.length) {
-            steps[currentStep].classList.add('active');
-            currentStep++;
-        } else {
-            clearInterval(interval);
-        }
-    }, 1000);
-}
-
-// Reset form
-function resetForm() {
-    currentWebsiteUrl = '';
-    sessionId = generateSessionId();
-    websiteUrlInput.value = '';
-    chatMessages.innerHTML = '<div class="message-date">Today</div>';
+    // Convert URLs to links
+    message = message.replace(
+        /(https?:\/\/[^\s]+)/g,
+        '<a href="$1" target="_blank" style="color: #6366f1; text-decoration: underline;">$1</a>'
+    );
     
-    chatSection.style.display = 'none';
-    analysisSection.style.display = 'block';
-    floatingChatBtn.style.display = 'none';
-    isMinimized = false;
+    // Convert **bold** to <strong>
+    message = message.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     
-    hideAllMessages();
+    return message;
 }
 
 // Validate URL
@@ -353,28 +279,124 @@ function isValidUrl(string) {
     }
 }
 
-// Auto-resize chat input
-chatInput.addEventListener('input', function() {
-    this.style.height = 'auto';
-    this.style.height = (this.scrollHeight) + 'px';
-});
+// Escape HTML
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
 
-// Enable send button only when input has text
-chatInput.addEventListener('input', function() {
-    sendBtn.disabled = this.value.trim() === '';
-});
+// Show error message
+function showError(message) {
+    addBotMessage(`❌ ${message}`);
+}
 
-// Initialize
-document.addEventListener('DOMContentLoaded', function() {
-    // Add some initial animations
-    console.log('SEO Analyzer loaded successfully');
-    console.log('Session ID:', sessionId);
+// Set analyze button loading state
+function setAnalyzeButtonLoading(loading) {
+    analyzeBtn.disabled = loading;
+    const btnText = analyzeBtn.querySelector('.btn-text');
+    const btnLoading = analyzeBtn.querySelector('.btn-loading');
     
-    // Check if webhooks are configured
-    if (CONFIG.n8nWebhookUrl === 'YOUR_N8N_WEBHOOK_URL_HERE') {
-        console.warn('⚠️ N8N Webhook URL not configured! Please update CONFIG.n8nWebhookUrl in script.js');
+    if (loading) {
+        btnText.style.display = 'none';
+        btnLoading.style.display = 'inline-block';
+    } else {
+        btnText.style.display = 'inline-block';
+        btnLoading.style.display = 'none';
     }
-    if (CONFIG.chatWebhookUrl === 'YOUR_N8N_CHAT_WEBHOOK_URL_HERE') {
-        console.warn('⚠️ N8N Chat Webhook URL not configured! Please update CONFIG.chatWebhookUrl in script.js');
+}
+
+// Scroll to bottom of chat
+function scrollToBottom() {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Save chat history to localStorage
+function saveChatHistory() {
+    const messages = Array.from(chatMessages.querySelectorAll('.message')).map(msg => ({
+        isBot: msg.classList.contains('bot-message'),
+        content: msg.querySelector('.message-content p').innerHTML
+    }));
+    
+    localStorage.setItem('seo_chat_history', JSON.stringify({
+        messages: messages,
+        currentUrl: currentWebsiteUrl,
+        sessionId: sessionId
+    }));
+}
+
+// Load chat history from localStorage
+function loadChatHistory() {
+    const history = localStorage.getItem('seo_chat_history');
+    if (history) {
+        try {
+            const data = JSON.parse(history);
+            if (data.messages && data.messages.length > 1) {
+                // Clear default message
+                chatMessages.innerHTML = '';
+                
+                // Restore messages
+                data.messages.forEach(msg => {
+                    if (msg.isBot) {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = 'message bot-message';
+                        messageDiv.innerHTML = `
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                <p>${msg.content}</p>
+                            </div>
+                        `;
+                        chatMessages.appendChild(messageDiv);
+                    } else {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = 'message user-message';
+                        messageDiv.innerHTML = `
+                            <div class="message-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="message-content">
+                                <p>${msg.content}</p>
+                            </div>
+                        `;
+                        chatMessages.appendChild(messageDiv);
+                    }
+                });
+                
+                currentWebsiteUrl = data.currentUrl || '';
+                sessionId = data.sessionId || generateSessionId();
+                
+                if (currentWebsiteUrl) {
+                    websiteUrlInput.value = currentWebsiteUrl;
+                    analysisResult.style.display = 'block';
+                }
+            }
+        } catch (e) {
+            console.error('Failed to load chat history:', e);
+        }
+    }
+}
+
+// Clear chat history
+function clearChatHistory() {
+    localStorage.removeItem('seo_chat_history');
+}
+
+// Listen for webhook responses (if using polling or WebSocket)
+// This is a placeholder - you'll need to implement based on your N8N setup
+window.addEventListener('message', function(event) {
+    // Handle webhook responses if sent via postMessage
+    if (event.data && event.data.type === 'webhook_response') {
+        if (event.data.message) {
+            addBotMessage(event.data.message);
+            saveChatHistory();
+        }
     }
 });
+
+// Export function for external scripts to add bot messages
+window.addBotResponse = function(message) {
+    addBotMessage(message);
+    saveChatHistory();
+};

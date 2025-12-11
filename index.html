@@ -1,206 +1,214 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEO Analyzer - AI Powered Website Analysis</title>
+    <title>SEO Analyzer Pro - ওয়েবসাইট SEO বিশ্লেষণ টুল</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Animated Background -->
-    <div class="animated-bg">
-        <div class="gradient-orb orb-1"></div>
-        <div class="gradient-orb orb-2"></div>
-        <div class="gradient-orb orb-3"></div>
-    </div>
-
-    <div class="container">
-        <!-- Header Section -->
-        <header class="header">
-            <div class="logo-section">
-                <div class="logo-icon">
-                    <svg width="60" height="60" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="25" cy="25" r="23" stroke="url(#gradient)" stroke-width="4"/>
-                        <path d="M15 25L22 32L35 18" stroke="url(#gradient)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                        <defs>
-                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                </div>
-                <h1 class="main-title">SEO Analyzer</h1>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <span>SEO Analyzer Pro</span>
             </div>
-            <p class="subtitle">AI-Powered Website SEO Analysis & Recommendations</p>
-        </header>
+            <nav class="nav">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#analyzer">Analyzer</a>
+            </nav>
+        </div>
+    </header>
 
-        <!-- Main Analysis Form -->
-        <section class="analysis-section" id="analysisSection">
-            <div class="card glass-card">
-                <h2 class="section-title">Analyze Your Website</h2>
-                <p class="section-description">Enter your website URL and get instant SEO recommendations</p>
-                
-                <form id="seoForm" class="seo-form">
-                    <div class="input-group">
-                        <div class="input-icon">
-                            <i class="fas fa-globe"></i>
-                        </div>
-                        <input 
-                            type="url" 
-                            id="websiteUrl" 
-                            placeholder="https://www.metal-archives.com" 
-                            required
-                            class="url-input"
-                        />
-                    </div>
-                    <button type="submit" class="analyze-btn" id="analyzeBtn">
-                        <span class="btn-text">Analyze Website</span>
-                        <span class="btn-icon"><i class="fas fa-arrow-right"></i></span>
-                    </button>
-                </form>
-
-                <!-- Loading State -->
-                <div class="loading-container" id="loadingContainer" style="display: none;">
-                    <div class="loading-spinner">
-                        <div class="spinner"></div>
-                    </div>
-                    <p class="loading-text">Analyzing your website...</p>
-                    <div class="loading-steps">
-                        <div class="step active">
-                            <i class="fas fa-search"></i>
-                            <span>Scanning website</span>
-                        </div>
-                        <div class="step">
-                            <i class="fas fa-brain"></i>
-                            <span>AI Analysis</span>
-                        </div>
-                        <div class="step">
-                            <i class="fas fa-chart-line"></i>
-                            <span>Generating report</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Error Message -->
-                <div class="message error-message" id="errorMessage" style="display: none;">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <p id="errorText"></p>
-                </div>
-
-                <!-- Success Message -->
-                <div class="message success-message" id="successMessage" style="display: none;">
-                    <i class="fas fa-check-circle"></i>
-                    <p>Analysis complete! Your AI assistant is ready to help.</p>
-                </div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>আপনার ওয়েবসাইটের SEO উন্নত করুন</h1>
+                <p>AI-চালিত বিশ্লেষণ দিয়ে আপনার ওয়েবসাইটের SEO সমস্যা খুঁজে বের করুন এবং Google-এ র‍্যাংক করুন</p>
+                <a href="#analyzer" class="cta-button">বিনামূল্যে বিশ্লেষণ করুন <i class="fas fa-arrow-right"></i></a>
             </div>
+        </div>
+    </section>
 
-            <!-- Feature Cards -->
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2>আমাদের ফিচার সমূহ</h2>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon rocket">
-                        <i class="fas fa-rocket"></i>
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
                     </div>
-                    <h3>Fast Analysis</h3>
-                    <p>Get instant SEO recommendations in seconds</p>
+                    <h3>AI-চালিত বিশ্লেষণ</h3>
+                    <p>উন্নত AI প্রযুক্তি দিয়ে আপনার ওয়েবসাইটের গভীর SEO বিশ্লেষণ</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon brain">
-                        <i class="fas fa-brain"></i>
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
                     </div>
-                    <h3>AI-Powered</h3>
-                    <p>Advanced AI algorithms for accurate insights</p>
+                    <h3>On-Page SEO চেক</h3>
+                    <p>Title, Meta, Heading, Content এবং আরও অনেক কিছু বিশ্লেষণ</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon chart">
+                    <div class="feature-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <h3>Performance Analysis</h3>
+                    <p>পেজ স্পিড, লোডিং টাইম এবং পারফরম্যান্স মেট্রিক্স</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>Actionable Insights</h3>
+                    <p>প্রতিটি সমস্যার জন্য সুনির্দিষ্ট সমাধান এবং পরামর্শ</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>রিয়েল-টাইম চ্যাট</h3>
+                    <p>AI এজেন্টের সাথে সরাসরি কথা বলে SEO পরামর্শ নিন</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
                         <i class="fas fa-chart-bar"></i>
                     </div>
-                    <h3>Detailed Reports</h3>
-                    <p>Comprehensive analysis with actionable steps</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon star">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <h3>Google Optimized</h3>
-                    <p>Recommendations focused on Google ranking</p>
+                    <h3>বিস্তারিত রিপোর্ট</h3>
+                    <p>সম্পূর্ণ SEO স্কোর এবং উন্নতির জন্য স্টেপ-বাই-স্টেপ গাইড</p>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- AI Chat Assistant -->
-        <section class="chat-section" id="chatSection" style="display: none;">
-            <div class="chat-container glass-card">
+    <!-- How It Works -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <h2>কিভাবে কাজ করে</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>ওয়েবসাইট URL দিন</h3>
+                    <p>আপনার ওয়েবসাইটের URL সার্চ বক্সে ইনপুট করুন</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>AI বিশ্লেষণ</h3>
+                    <p>আমাদের AI সিস্টেম আপনার ওয়েবসাইট বিশ্লেষণ করবে</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>রিপোর্ট পান</h3>
+                    <p>বিস্তারিত SEO রিপোর্ট এবং পরামর্শ পাবেন</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>চ্যাট করুন</h3>
+                    <p>AI এজেন্টের সাথে আপনার প্রশ্ন করুন</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Analyzer Section -->
+    <section id="analyzer" class="analyzer-section">
+        <div class="container">
+            <h2>এখনই আপনার ওয়েবসাইট বিশ্লেষণ করুন</h2>
+            
+            <!-- Search Box -->
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-link"></i>
+                    <input type="url" id="websiteUrl" placeholder="আপনার ওয়েবসাইটের URL দিন (উদাহরণ: https://example.com)" />
+                    <button id="analyzeBtn" class="analyze-btn">
+                        <span class="btn-text">বিশ্লেষণ করুন</span>
+                        <span class="btn-loading" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i> বিশ্লেষণ হচ্ছে...
+                        </span>
+                    </button>
+                </div>
+                <p class="hint">আপনার ওয়েবসাইটের সম্পূর্ণ URL দিন (http:// বা https:// সহ)</p>
+            </div>
+
+            <!-- Analysis Result -->
+            <div id="analysisResult" class="analysis-result" style="display: none;">
+                <div class="result-header">
+                    <h3><i class="fas fa-check-circle"></i> বিশ্লেষণ সম্পন্ন হয়েছে</h3>
+                    <p>নিচের চ্যাট এজেন্টের সাথে কথা বলে বিস্তারিত জানুন</p>
+                </div>
+            </div>
+
+            <!-- Chat Interface -->
+            <div class="chat-container">
                 <div class="chat-header">
                     <div class="chat-header-info">
-                        <div class="assistant-avatar">
+                        <div class="chat-avatar">
                             <i class="fas fa-robot"></i>
-                            <span class="status-dot"></span>
                         </div>
-                        <div class="assistant-info">
+                        <div>
                             <h3>SEO Assistant</h3>
-                            <p class="status-text">Online - Ready to help</p>
+                            <p class="status"><span class="status-dot"></span> অনলাইন</p>
                         </div>
                     </div>
-                    <div class="chat-actions">
-                        <button class="icon-btn" id="minimizeChat" title="Minimize">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                        <button class="icon-btn" id="newAnalysisBtn" title="New Analysis">
-                            <i class="fas fa-redo"></i>
-                        </button>
-                    </div>
+                    <button id="clearChat" class="clear-btn" title="চ্যাট ক্লিয়ার করুন">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
                 </div>
-
+                
                 <div class="chat-messages" id="chatMessages">
-                    <div class="message-date">Today</div>
-                    <!-- Messages will be added here dynamically -->
+                    <div class="message bot-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <p>নমস্কার! আমি আপনার SEO সহকারী। আপনার ওয়েবসাইটের URL উপরের সার্চ বক্সে দিন, আমি বিশ্লেষণ করে আপনাকে সাহায্য করব। 🚀</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="chat-input-container">
-                    <div class="typing-indicator" id="typingIndicator" style="display: none;">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                    <form class="chat-input-form" id="chatForm">
-                        <button type="button" class="icon-btn attach-btn" title="Attach file">
-                            <i class="fas fa-paperclip"></i>
-                        </button>
-                        <input 
-                            type="text" 
-                            id="chatInput" 
-                            placeholder="Ask me anything about your website's SEO..." 
-                            autocomplete="off"
-                        />
-                        <button type="submit" class="icon-btn send-btn" id="sendBtn">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </form>
-                    <div class="quick-questions">
-                        <span class="quick-question-label">Quick questions:</span>
-                        <button class="quick-question-btn" data-question="How can I improve my meta descriptions?">
-                            Meta descriptions
-                        </button>
-                        <button class="quick-question-btn" data-question="What about mobile optimization?">
-                            Mobile optimization
-                        </button>
-                        <button class="quick-question-btn" data-question="How to improve page speed?">
-                            Page speed
-                        </button>
-                    </div>
+                    <textarea id="chatInput" placeholder="আপনার প্রশ্ন করুন..." rows="1"></textarea>
+                    <button id="sendBtn" class="send-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
                 </div>
             </div>
-        </section>
-    </div>
+        </div>
+    </section>
 
-    <!-- Floating Chat Button (when minimized) -->
-    <button class="floating-chat-btn" id="floatingChatBtn" style="display: none;">
-        <i class="fas fa-comments"></i>
-        <span class="notification-badge" id="notificationBadge">1</span>
-    </button>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-chart-line"></i> SEO Analyzer Pro</h3>
+                    <p>AI-চালিত SEO বিশ্লেষণ টুল যা আপনার ওয়েবসাইটকে Google-এ শীর্ষে নিয়ে যেতে সাহায্য করে।</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#analyzer">Analyzer</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-envelope"></i> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ee9d9b9e9e819c9aae9d8b818f808f8297948b9cc09e9c81">[email&#160;protected]</a></p>
+                    <p><i class="fas fa-globe"></i> www.seoanalyzer.pro</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 SEO Analyzer Pro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 
-    <script src="script.js"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="script.js"></script>
 </body>
 </html>
